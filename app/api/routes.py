@@ -3,6 +3,7 @@ import os
 import shutil
 
 from app.services.parser import parse_python_file
+from app.services.reviewer import review_code
 
 router = APIRouter()
 
@@ -20,8 +21,10 @@ async def upload_file(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     parsed_data = parse_python_file(file_path)
+    review = review_code(parsed_data["raw_code"])
 
     return {
         "filename": file.filename,
-        "parsed_data": parsed_data
+        "parsed_data": parsed_data,
+        "ai_review": review
     }
