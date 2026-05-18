@@ -81,3 +81,95 @@ By using async, the wait time of the program is reduced, and the server can simu
 Hence, the upload functionality is implemented asynchronously for better performance and scalability.
 
 All the API routes are defined in routes.py and are called in main.py, where the FastAPI application is initialized.
+
+
+Stage 2: Integration of AI Layer with Backend
+AI Layer Integration using FastAPI
+
+Step 2: Integration of the AI layer with the backend layer we built using API and FastAPI.
+
+We'll create a .env file and store our OpenAI key or Gemini key or Groq key. We use .env and declare it in the .gitignore file so that the key is not hardcoded anywhere in the code. This provides secrecy, encapsulates the key, and keeps it private.
+
+LLM Service Creation
+
+Now we'll create an LLM service where we initialize the model using:
+
+API key
+Model name
+Temperature
+
+We set the temperature as 0.
+
+In this case, we use temperature as 0 to avoid randomness and improve consistency.
+
+We initialize the LLM model using the model name and temperature. Then we invoke the model by passing in the prompt.
+
+We use the prompt defined in prompts.txt and pass it as a parameter to invoke the LLM model and return the response.
+
+Prompt Engineering
+
+We create a prompt.txt file under:
+
+app/prompts/prompt.txt
+
+A machine prompt is written to instruct the LLM to perform its activities and define its responsibilities.
+
+Here, we are creating a security-specific prompt to check:
+
+Security vulnerabilities
+Database injections
+Authentication issues
+
+The model will provide:
+
+Issue
+Recommendation
+Severity of the issue
+
+We also have a formatted section at the bottom of the prompt to pass the code as a parameter.
+
+Building reviewer.py
+
+Now we start building reviewer.py.
+
+reviewer.py has two components:
+
+1. Loading the Prompt
+
+For loading the prompt, we use the prompt.txt file which we just built.
+
+2. Review Code
+
+Here we:
+
+Take the prompt template
+Take the code chunk
+Pass it into the prompt
+Generate a review using the final prompt
+Return the review
+
+generate_review() is used from the LLM service, which invokes the LLM model and returns the response.
+
+FastAPI Route Integration
+
+We use this review_code method and import it into routes.py.
+
+We create a response object for this, and return the AI review by calling the review_code method from the LLM service.
+
+At this point, our app acts as an agent which:
+
+Takes code as input
+Uses machine prompts from prompt.txt
+Generates a review using the LLM service
+Routes it back as a response using FastAPI
+Response Schemas
+
+To make the response more specific, we define schemas under:
+
+app/schemas.py
+
+We define a schema which has three components:
+
+Issues
+Severity
+Recommendation
