@@ -1,4 +1,5 @@
 from app.services.llm_service import generate_review
+from app.services import retrieve_context
 
 
 def load_prompt():
@@ -14,9 +15,11 @@ def load_prompt():
 
 def review_code(code: str):
 
+    context = retrieve_context(code)
+
     prompt_template = load_prompt()
 
-    final_prompt = prompt_template.format(code=code)
+    final_prompt = prompt_template.format(code=code, context=context)
 
     review = generate_review(final_prompt)
 

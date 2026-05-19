@@ -1,0 +1,8 @@
+Avoid SQL injection vulnerabilities.
+Never concatenate user input directly into SQL queries.
+Use parameterized queries.
+
+Avoid hardcoded credentials.
+Store secrets in environment variables.
+
+Validate all user inputs.

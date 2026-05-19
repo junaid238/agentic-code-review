@@ -173,3 +173,40 @@ We define a schema which has three components:
 Issues
 Severity
 Recommendation
+
+
+Stage 3: Integration of RAG Pipeline with LangChain Model
+
+In Stage 3, we integrate the RAG (Retrieval-Augmented Generation) pipeline into the model built using LangChain. The goal of this stage is to provide context-aware code reviews by retrieving coding standards, security guidelines, and best practices from a knowledge base before generating the final review.
+
+We start by creating a standards directory inside the data folder. This directory contains multiple resources such as text files and PDFs that include:
+
+Coding standards
+Language essentials
+Best coding practices
+Security practices
+Architecture guidelines
+
+A service named vectorStore.upEven is created to read all files from the standards folder and write them into the ChromaDB persistence path. All the loaded files are treated as documents.
+
+The documents are processed using chunking along with chunk overlap. Chunk overlap is important because it helps maintain context continuity between adjacent chunks, improving retrieval quality and preserving semantic meaning across sections.
+
+To create the vector store, we use the following inputs:
+
+Documents
+Embeddings
+Persist directory
+
+After processing, the vector store is returned and stored in ChromaDB, which acts as the vector database for storing embeddings.
+
+Next, we define an embedding service using Hugging Face embeddings. The embedding model used is sentence-transformers.
+
+Using the embeddings and vector store within the retriever layer, we implement a method that performs a similarity search using the user query. The retriever returns the top K most relevant results from the vector store based on semantic similarity. These retrieved results act as contextual knowledge for the review generation process.
+
+The retrieved context is then injected into the prompt template that we have built earlier. The final prompt sent to the LLM contains:
+
+The input code received from the user
+Retrieved contextual standards and guidelines from the vector store
+Additional instructions for code review generation
+
+Finally, the prompt is passed to the LLM service, which generates a context-aware and standards-based code review response and returns it to the user.

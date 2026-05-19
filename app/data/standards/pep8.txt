@@ -1,0 +1,4 @@
+Function names should use snake_case.
+Class names should use PascalCase.
+Keep line lengths under 79 characters.
+Use meaningful variable names.
