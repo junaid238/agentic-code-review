@@ -2,7 +2,15 @@ Agentic Code Review
 
 Agentic Code Review is a project where we use multi-agent systems using LLMs, LangChain, and LangGraph, having built pipelines using RAG architecture, where the system reviews any kind of code and gives suggestions based on code correctness, syntax, and best practices.
 
-Tech Stack FastAPI LangChain LangGraph OpenAI APIs RAG (Retrieval-Augmented Generation) Docker Python AST (Abstract Syntax Tree) Project Architecture
+Tech Stack
+FastAPI
+LangChain
+LangGraph
+OpenAI APIs
+RAG (Retrieval-Augmented Generation)
+Docker
+Python AST (Abstract Syntax Tree)
+Project Architecture
 
 For the API layer, we are using FastAPI to manage all the routes.
 
@@ -13,19 +21,20 @@ For correction and reflection on the agent, we are using RAG pipelines to correc
 Docker is used for containerization of the entire project as an application.
 
 Folder Structure
-agentic-code-review/ 
-│ ├── app/ 
-    ├── api/ 
-    ├── data/
-    ├── graph/ 
-    ├── prompts/ 
-    ├── services/ 
-    ├── utils/
-    ├── uploads/
-    ├── main.py 
-    └── requirements.txt
-
-Stage 1: File Upload and Processing Pipeline File Upload
+agentic-code-review/
+│
+├── app/
+├── api/
+├── data/
+├── graph/
+├── prompts/
+├── services/
+├── utils/
+├── uploads/
+├── main.py
+└── requirements.txt
+Stage 1: File Upload and Processing Pipeline
+File Upload
 
 The user uploads the file or code using the upload functionality built with FastAPI.
 
@@ -37,11 +46,17 @@ The main purpose of parser.py is to extract the main components of the uploaded 
 
 We are utilizing Python's Abstract Syntax Tree (AST), which helps in extracting abstract components from the code such as:
 
-Classes Imports Alias Imports Functions
+Classes
+Imports
+Alias Imports
+Functions
 
 The parser.py file returns a list of:
 
-Functions Classes Imports Aliases
+Functions
+Classes
+Imports
+Aliases
 
 from the uploaded code file.
 
@@ -66,3 +81,132 @@ By using async, the wait time of the program is reduced, and the server can simu
 Hence, the upload functionality is implemented asynchronously for better performance and scalability.
 
 All the API routes are defined in routes.py and are called in main.py, where the FastAPI application is initialized.
+
+
+Stage 2: Integration of AI Layer with Backend
+AI Layer Integration using FastAPI
+
+Step 2: Integration of the AI layer with the backend layer we built using API and FastAPI.
+
+We'll create a .env file and store our OpenAI key or Gemini key or Groq key. We use .env and declare it in the .gitignore file so that the key is not hardcoded anywhere in the code. This provides secrecy, encapsulates the key, and keeps it private.
+
+LLM Service Creation
+
+Now we'll create an LLM service where we initialize the model using:
+
+API key
+Model name
+Temperature
+
+We set the temperature as 0.
+
+In this case, we use temperature as 0 to avoid randomness and improve consistency.
+
+We initialize the LLM model using the model name and temperature. Then we invoke the model by passing in the prompt.
+
+We use the prompt defined in prompts.txt and pass it as a parameter to invoke the LLM model and return the response.
+
+Prompt Engineering
+
+We create a prompt.txt file under:
+
+app/prompts/prompt.txt
+
+A machine prompt is written to instruct the LLM to perform its activities and define its responsibilities.
+
+Here, we are creating a security-specific prompt to check:
+
+Security vulnerabilities
+Database injections
+Authentication issues
+
+The model will provide:
+
+Issue
+Recommendation
+Severity of the issue
+
+We also have a formatted section at the bottom of the prompt to pass the code as a parameter.
+
+Building reviewer.py
+
+Now we start building reviewer.py.
+
+reviewer.py has two components:
+
+1. Loading the Prompt
+
+For loading the prompt, we use the prompt.txt file which we just built.
+
+2. Review Code
+
+Here we:
+
+Take the prompt template
+Take the code chunk
+Pass it into the prompt
+Generate a review using the final prompt
+Return the review
+
+generate_review() is used from the LLM service, which invokes the LLM model and returns the response.
+
+FastAPI Route Integration
+
+We use this review_code method and import it into routes.py.
+
+We create a response object for this, and return the AI review by calling the review_code method from the LLM service.
+
+At this point, our app acts as an agent which:
+
+Takes code as input
+Uses machine prompts from prompt.txt
+Generates a review using the LLM service
+Routes it back as a response using FastAPI
+Response Schemas
+
+To make the response more specific, we define schemas under:
+
+app/schemas.py
+
+We define a schema which has three components:
+
+Issues
+Severity
+Recommendation
+
+
+Stage 3: Integration of RAG Pipeline with LangChain Model
+
+In Stage 3, we integrate the RAG (Retrieval-Augmented Generation) pipeline into the model built using LangChain. The goal of this stage is to provide context-aware code reviews by retrieving coding standards, security guidelines, and best practices from a knowledge base before generating the final review.
+
+We start by creating a standards directory inside the data folder. This directory contains multiple resources such as text files and PDFs that include:
+
+Coding standards
+Language essentials
+Best coding practices
+Security practices
+Architecture guidelines
+
+A service named vectorStore.upEven is created to read all files from the standards folder and write them into the ChromaDB persistence path. All the loaded files are treated as documents.
+
+The documents are processed using chunking along with chunk overlap. Chunk overlap is important because it helps maintain context continuity between adjacent chunks, improving retrieval quality and preserving semantic meaning across sections.
+
+To create the vector store, we use the following inputs:
+
+Documents
+Embeddings
+Persist directory
+
+After processing, the vector store is returned and stored in ChromaDB, which acts as the vector database for storing embeddings.
+
+Next, we define an embedding service using Hugging Face embeddings. The embedding model used is sentence-transformers.
+
+Using the embeddings and vector store within the retriever layer, we implement a method that performs a similarity search using the user query. The retriever returns the top K most relevant results from the vector store based on semantic similarity. These retrieved results act as contextual knowledge for the review generation process.
+
+The retrieved context is then injected into the prompt template that we have built earlier. The final prompt sent to the LLM contains:
+
+The input code received from the user
+Retrieved contextual standards and guidelines from the vector store
+Additional instructions for code review generation
+
+Finally, the prompt is passed to the LLM service, which generates a context-aware and standards-based code review response and returns it to the user.
