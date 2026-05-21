@@ -12,6 +12,20 @@ Docker
 Python AST (Abstract Syntax Tree)
 Project Architecture
 
+User Upload
+   ↓
+FastAPI Route
+   ↓
+Parser + Chunker
+   ↓
+Retriever (ChromaDB)
+   ↓
+LangGraph Agents
+   ↓
+Aggregator
+   ↓
+Final Review
+
 For the API layer, we are using FastAPI to manage all the routes.
 
 On the AI layer, we are using LangGraph, LangChain, and OpenAI to write prompts and generate review text.
