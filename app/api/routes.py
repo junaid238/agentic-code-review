@@ -4,6 +4,7 @@ import shutil
 
 from app.services.parser import parse_python_file
 from app.services.reviewer import review_code
+from app.graph.workflow import graph
 
 router = APIRouter()
 
@@ -21,10 +22,18 @@ async def upload_file(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     parsed_data = parse_python_file(file_path)
-    review = review_code(parsed_data["raw_code"])
+    initial_state = {
+    "code": parsed_data["raw_code"],
+    "context": "",
+    "security_review": "",
+    "performance_review": "",
+    "style_review": "",
+    "final_review": ""
+}
 
+    result = graph.invoke(initial_state)
     return {
         "filename": file.filename,
         "parsed_data": parsed_data,
-        "ai_review": review
+        "final_review": result["final_review"]
     }

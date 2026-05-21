@@ -1,5 +1,5 @@
 from app.services.llm_service import generate_review
-from app.services import retrieve_context
+from app.services.retriever import retrieve_context
 
 
 def load_prompt():
