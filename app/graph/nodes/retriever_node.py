@@ -1,3 +1,9 @@
+
+'''
+Author : Junaid Khan 
+takes in state[code] as input generates context by passing code as query to retriever.py and returns the state[context]
+
+'''
 from app.services.retriever import retrieve_context
 
 

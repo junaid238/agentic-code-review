@@ -1,3 +1,9 @@
+
+'''
+Author : Junaid Khan 
+gets inputs as state[code] and state[context] from retriever node (inital point in workflow)
+genrates a promt using the inputs and sends it to llm_service to generate a reviw(output) using GenAI prompt engineering techniques.
+'''
 from app.graph import state
 from app.services.llm_service import generate_review
 from app.utils.helpers import safe_json_parse

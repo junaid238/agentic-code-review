@@ -1,3 +1,15 @@
+
+'''
+Author : Junaid Khan 
+Routes for api , specifically to get upload functionality used as import in main.py 
+functionality:  
+    gets the file upload writes it as binary (wb)to uploads directory 
+    gets the file parsed using parser.py 
+    creates an intial state for langraph graph 
+    invokes the compiled workflow graph 
+    returns the response/ recommendation.
+    '''
+
 from fastapi import APIRouter, UploadFile, File
 import os
 import shutil

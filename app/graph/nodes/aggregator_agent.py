@@ -1,3 +1,8 @@
+
+'''
+Author : Junaid Khan 
+gets inputsfrom all agents individually and aggregates them into a final review before returning
+'''
 from app.services.llm_service import generate_review
 
 

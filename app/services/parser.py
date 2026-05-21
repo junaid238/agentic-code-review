@@ -1,4 +1,12 @@
-import ast # abstract syntax tree , to split the code uploaded into imports , classes , functions etc 
+'''
+Author : Junaid Khan 
+used to parse the recieved code from upload functionality and return the programming components from the file 
+using abstract syntax tree (ast) , since it is helpfuli nparsing th efile and getting imports , classes and functions out of it 
+also calls chunker.py to get the file split into chunks and returns chunks 
+
+'''
+
+import ast
 from app.services.chunker import chunk_code
 
 

@@ -1,3 +1,11 @@
+
+'''
+Author : Junaid Khan 
+perfoms a similarity search using state[code] as input and returns contexts with k items chosen 3 in my case.
+Note: similarity search is generally cosine similarity  (distance) 
+
+'''
+
 from langchain_community.vectorstores import Chroma
 
 from app.services.embedding_service import embedding_model
